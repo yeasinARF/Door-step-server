@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run(){
     try{
-        const serviceCollection=client.db('doorStep').collection('services')
+        const serviceCollection= client.db('doorStep').collection('services')
     }
     finally{
 
