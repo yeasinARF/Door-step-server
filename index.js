@@ -23,7 +23,7 @@ async function run() {
         const ReviewCollection = client.db('doorStep').collection('reviews')
         app.get('/services', async (req, res) => {
             const query = {}
-            const cursor = serviceCollection.find(query).sort({currentTime:-1});
+            const cursor = serviceCollection.find(query).sort({ currentTime: -1 });
             const services = await cursor.limit(3).toArray();
             res.send(services);
         })
@@ -61,12 +61,60 @@ async function run() {
         })
         app.get("/reviews/:id", async (req, res) => {
             const id = req.params.id;
-            const query = { service_id:id};
+            const query = { service_id: id };
             const cursor = ReviewCollection.find(query);
             const result = await cursor.toArray();
             console.log(query);
             res.send(result);
         });
+        app.get("/review/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const cursor = ReviewCollection.find(query);
+            const result = await cursor.toArray();
+            console.log(query);
+            res.send(result);
+        });
+        app.patch("/review/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const updatedReview = req.body;
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    message:updatedReview.message,
+                },
+            };
+            const result = await ReviewCollection.updateOne(query,updateDoc,options);
+            res.send(result);
+        });
+        app.delete("/review/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ReviewCollection.deleteOne(query);
+            console.log(query);
+            res.send(result);
+        });
+        app.get("/myreviews/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const cursor = ReviewCollection.find(query);
+            const result = await cursor.toArray();
+            console.log(query);
+            res.send(result);
+        });
+        // app.get('/myreviews', async (req, res) => {
+        //     const query = {}
+        //     if (req.query.email) {
+        //         query = {
+        //             email: req.query.email
+        //         }
+        //     }
+        //     const cursor = ReviewCollection.find(query);
+        //     const result = await cursor.toArray();
+        //     res.send(result);
+        // })
+
 
     }
     finally {
