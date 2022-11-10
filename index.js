@@ -20,6 +20,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const serviceCollection = client.db('doorStep').collection('services')
+        const ReviewCollection = client.db('doorStep').collection('reviews')
         app.get('/services', async (req, res) => {
             const query = {}
             const cursor = serviceCollection.find(query).sort({currentTime:-1});
@@ -46,6 +47,27 @@ async function run() {
             const result = await serviceCollection.insertOne(service);
             res.send(result);
         });
+        app.post("/reviews", async (req, res) => {
+            const review = req.body;
+            console.log(review);
+            const result = await ReviewCollection.insertOne(review);
+            res.send(result);
+        });
+        app.get('/reviews', async (req, res) => {
+            const query = {}
+            const cursor = ReviewCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.get("/reviews/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { service_id:id};
+            const cursor = ReviewCollection.find(query);
+            const result = await cursor.toArray();
+            console.log(query);
+            res.send(result);
+        });
+
     }
     finally {
 
