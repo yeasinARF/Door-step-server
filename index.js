@@ -98,7 +98,7 @@ async function run() {
         app.get("/myreviews/:email", async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
-            const cursor = ReviewCollection.find(query);
+            const cursor = ReviewCollection.find(query).sort({time:-1});
             const result = await cursor.toArray();
             console.log(query);
             res.send(result);
